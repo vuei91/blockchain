@@ -1,17 +1,8 @@
-const SHA256 = require("crypto-js/sha256");
+const Chain = require("./chain");
 
-const plainText = "Hello world";
+function main() {
+  const chain = new Chain();
+  chain.mining();
+}
 
-const hash = SHA256(plainText).toString();
-
-console.log("hash", hash);
-
-const merkle = require("merkle");
-
-const data = ["a", "b", "c", "d", "e", "f", "g", "h"];
-
-const merkleTree = merkle("sha256").sync(data);
-
-const merkleRoot = merkleTree.root();
-
-console.log("merkleRoot", merkleRoot);
+main();
