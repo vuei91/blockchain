@@ -40,10 +40,10 @@ class P2PServer {
   }
 
   messageHandler(socket) {
-    const cb = (message) => {
+    const callback = (message) => {
       console.log(message.toString());
     };
-    socket.on("message", cb);
+    socket.on("message", callback);
   }
 
   send(socket, message) {
