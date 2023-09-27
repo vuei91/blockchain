@@ -159,8 +159,25 @@ class Chain {
       Block.createBlockHash(newBlock) === newBlock.hash
     );
   }
-  // 유효성 블록체인 검증
-  isValidBlockchain() {}
+  /**
+   * 블록체인 유효성 검증
+   * @param {Block[]} blocks
+   * @returns 유효하게 검증된 블록체인
+   */
+  isValidBlockchain(blocks) {
+    // 블록체인의 모든 블록에 접근
+    for (let i = 1; i < blocks.length; i++) {
+      // 앞에 블록
+      let preBlock = blocks[i - 1];
+      // 그 다음 블록
+      let curBlock = blocks[i];
+      // 두 블록을 검증 진행
+      if (!this.isValidBlock(preBlock, curBlock)) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
 
 module.exports = Chain;
