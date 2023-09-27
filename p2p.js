@@ -2,7 +2,8 @@ const { WebSocketServer, WebSocket } = require("ws");
 const MessageType = require("./msg");
 
 class P2PServer {
-  constructor() {
+  constructor(chain) {
+    this.chain = chain;
     this.sockets = [];
   }
 
@@ -41,7 +42,32 @@ class P2PServer {
 
   messageHandler(socket) {
     const callback = (message) => {
-      console.log(message.toString());
+      const result = JSON.parse(message.toString());
+      switch (result.type) {
+        case MessageType.latest_block:
+          const msg1 = {
+            type: MessageType.all_block,
+            payload: this.chain.getLastBlock(),
+          };
+          this.send(socket, msg1);
+          break;
+        case MessageType.all_block:
+          const msg2 = {
+            type: MessageType.receivedChain,
+            payload: this.chain.blocks,
+          };
+          const receivedBlock = result.payload;
+          const isSuccess = this.chain.addBlock(receivedBlock);
+          if (isSuccess) break;
+          this.send(socket, msg2);
+          break;
+        case MessageType.receivedChain:
+          const receivedChain = result.payload;
+          //   this.chain.handlChainReponse(receivedChain, this);
+          break;
+        case MessageType.receivedTx:
+          break;
+      }
     };
     socket.on("message", callback);
   }
