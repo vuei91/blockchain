@@ -12,6 +12,7 @@
   "dependencies": {
     "bn.js": "^5.2.1",
     "crypto-js": "^4.1.1",
-    "merkle": "^0.6.0"
+    "merkle": "^0.6.0",
+    "ws": "^8.14.2"
   }
 }
