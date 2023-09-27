@@ -13,7 +13,7 @@ class Block {
     this.previousHash = previousBlock?.hash; // 이전 블록해시
     this.nonce = 0; // 해시퍼즐정답
     this.difficulty = 1; // 해시퍼즐
-    this.hash; // 현재 블록 해시값
+    this.hash = 0; // 현재 블록 해시값
     this.merkleRoot = Block.getMerkleRoot(transactions); // 머클루트
     this.transactions = transactions; // 트랜잭션 모음 body
   }

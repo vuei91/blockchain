@@ -21,9 +21,15 @@ class Chain {
    * @param {Block} block 블록
    */
   addBlock(block) {
-    //TODO block 유효성 검증을 진행해야함
-    this.blocks.push(block);
+    const lastBlock = this.getLastBlock();
+    // 블록 유효성 검증 진행
+    if (this.isValidBlock(lastBlock, block)) {
+      this.blocks.push(block);
+    } else {
+      console.error("유효하지 않은 블록입니다");
+    }
   }
+
   /**
    * 채굴
    */
@@ -135,8 +141,24 @@ class Chain {
   getLastBlock() {
     return this.blocks[this.blocks.length - 1];
   }
-  // 유효성 블록 검증
-  isValidBlock() {}
+  /**
+   * 유효 블록 검증
+   * @param {Block} preBlock
+   * @param {Block} newBlock
+   * @returns 유효한 블록 검증
+   */
+  isValidBlock(preBlock, newBlock) {
+    // 제네시스 블록은 통과
+    if (preBlock.index === 1) return true;
+    return (
+      // 제네시스 블록이 아니어야함
+      preBlock.index > 1 &&
+      // 새로운 블록의 이전해시와 이전블록의 해시가 같아야 함
+      preBlock.hash === newBlock.previousHash &&
+      // 새로운 블록의 해시와 해시함수를 통해 해시가 같아야 함
+      Block.createBlockHash(newBlock) === newBlock.hash
+    );
+  }
   // 유효성 블록체인 검증
   isValidBlockchain() {}
 }
