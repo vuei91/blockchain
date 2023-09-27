@@ -2,19 +2,31 @@ const { BN } = require("bn.js");
 const Block = require("./block");
 
 class Chain {
+  /**
+   * 체인 인스턴스 초기화 값
+   */
   constructor() {
     this.blocks = [Block.getGenesis()]; // 블록 모이는 곳
     this.mempool = []; // tx 모이는 곳
   }
-  // 트랜잭션 추가
+  /**
+   * 멤풀에 트랜잭션 추가
+   * @param {object} tx 트랜잭션
+   */
   addTx(tx) {
     this.mempool.push(tx);
   }
+  /**
+   * 체인에 블록 추가
+   * @param {Block} block 블록
+   */
   addBlock(block) {
     //TODO block 유효성 검증을 진행해야함
     this.blocks.push(block);
   }
-  // 채굴
+  /**
+   * 채굴
+   */
   mining() {
     console.log("채굴 시작!");
     // 코인베이스 트랜잭션
@@ -40,12 +52,41 @@ class Chain {
     // 새로만든 블록 출력
     console.log(newBlock);
     console.log("채굴 성공!");
+    // 블록체인에 블록을 연결
+    this.addBlock(newBlock);
   }
-  // 난이도 구하기 -> 자가제한시스템
+
+  /**
+   * 난이도 구하기 -> 자가제한시스템
+   * @param {number} difficulty 난이도
+   * @returns 자가제한 시스템이 적용 된 난이도
+   */
   getDifficulty(difficulty) {
-    return 1;
+    const lastBlock = this.getLastBlock();
+    const SECONDS = 10; // 초
+    const BLOCK_NUMBER = 10;
+    const MUL = 4;
+    // 10의 배수일 경우 난이도를 체크해서 변경해준다
+    if (lastBlock.index > 0 && lastBlock.index % BLOCK_NUMBER === 0) {
+      console.log("난이도 조절 시작");
+      let prevTime = this.blocks[this.blocks.length - BLOCK_NUMBER].timestamp;
+      let lastTime = lastBlock.timestamp;
+      let avgTime = (lastTime - prevTime) / BLOCK_NUMBER / 1000;
+      console.log("평균시간", avgTime);
+      let multiple = avgTime < SECONDS ? MUL : 1 / MUL;
+      console.log(avgTime < SECONDS ? "난이도를 올림" : "난이도를 낮춤");
+      difficulty = multiple * difficulty;
+      console.log("변경된 난이도", difficulty);
+      console.log("난이도 조절 끝");
+    }
+    return difficulty;
   }
-  // 타겟(목표값) 구하기
+
+  /**
+   * 타겟(목표값) 구하기
+   * @param {number} difficulty 난이도
+   * @returns 목표값
+   */
   getTarget(difficulty) {
     let bits = this.difficultToBits(difficulty);
     let bits16 = parseInt("0x" + bits.toString(16), 16);
@@ -56,7 +97,12 @@ class Chain {
     let k = Buffer.from("0".repeat(64 - target16.length) + target16, "hex");
     return k.toString("hex");
   }
-  // 난이도를 통해서 비트구하기
+
+  /**
+   * 난이도를 통해서 비트 구하기
+   * @param {number} difficulty 난이도
+   * @returns 난이도 비트
+   */
   difficultToBits(difficulty) {
     const maximumTarget = "0x00ffff000000" + "0".repeat(64 - 12);
     const difficulty16 = difficulty.toString(16);
@@ -81,7 +127,11 @@ class Chain {
     bits >>>= 0;
     return parseInt(bits.toString(10));
   }
-  // 마지막 블록
+
+  /**
+   * 체인에 연결된 마지막 블록
+   * @returns 마지막 블록
+   */
   getLastBlock() {
     return this.blocks[this.blocks.length - 1];
   }
