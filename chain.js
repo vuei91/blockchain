@@ -32,11 +32,13 @@ class Chain {
       return false;
     }
   }
-
+  slowResolve() {
+    return new Promise((res) => setTimeout(res.bind(), 0));
+  }
   /**
    * 채굴
    */
-  mining() {
+  async mining() {
     console.log("채굴 시작!");
     // 코인베이스 트랜잭션
     const coinbaseTx = { from: "COINBASE", to: "MINER", value: 50 };
@@ -55,6 +57,7 @@ class Chain {
     // 목표값과 해시값을 비교하여 해시퍼즐 정답을 만듦
     while (!(Block.createBlockHash(newBlock) <= target)) {
       newBlock.nonce++;
+      await this.slowResolve();
     }
     // 해시퍼즐 정답을 만든 해시를 기존 블록에 셋팅
     newBlock.hash = Block.createBlockHash(newBlock);
