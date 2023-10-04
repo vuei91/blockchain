@@ -26,8 +26,10 @@ class Chain {
     // 블록 유효성 검증 진행
     if (this.isValidBlock(lastBlock, block)) {
       this.blocks.push(block);
+      return true;
     } else {
       console.error("유효하지 않은 블록입니다");
+      return false;
     }
   }
 
