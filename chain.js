@@ -1,5 +1,6 @@
 const { BN } = require("bn.js");
 const Block = require("./block");
+const MessageType = require("./msg");
 
 class Chain {
   /**
@@ -176,6 +177,43 @@ class Chain {
         return false;
       }
     }
+    return true;
+  }
+
+  handlChainReponse(receivedChain, ws) {
+    const isValidChain = this.isValidBlockchain(receivedChain);
+    if (!isValidChain) return false;
+
+    const isValid = this.replaceChain(receivedChain);
+    if (!isValid) return false;
+
+    const msg = {
+      type: MessageType.receivedChain,
+      payload: receivedChain,
+    };
+
+    ws.broadcast(msg);
+
+    return true;
+  }
+
+  // longest 체인 룰
+  replaceChain(receivedChain) {
+    const latestReceivedBlock = receivedChain[receivedChain.length - 1];
+    const lastBlock = this.getLastBlock();
+
+    if (latestReceivedBlock.index === 1) {
+      console.log("받은 최신 블록이 제네시스 블록입니다");
+      return false;
+    }
+
+    if (latestReceivedBlock.index <= lastBlock.index) {
+      console.log("자신의 블록이 더 길거나 같습니다");
+      return false;
+    }
+
+    this.blocks = receivedChain;
+
     return true;
   }
 }

@@ -63,7 +63,7 @@ class P2PServer {
           break;
         case MessageType.receivedChain:
           const receivedChain = result.payload;
-          //   this.chain.handlChainReponse(receivedChain, this);
+          this.chain.handlChainReponse(receivedChain, this);
           break;
         case MessageType.receivedTx:
           break;
