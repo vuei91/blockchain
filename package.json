@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "node1": "cross-env PORT=3000 node app",
+    "node2": "cross-env PORT=3001 node app"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "bn.js": "^5.2.1",
+    "cross-env": "^7.0.3",
     "crypto-js": "^4.1.1",
     "express": "^4.18.2",
     "merkle": "^0.6.0",

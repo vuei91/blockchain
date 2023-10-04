@@ -65,7 +65,7 @@ class Chain {
     console.log(newBlock);
     console.log("채굴 성공!");
     // 블록체인에 블록을 연결
-    this.addBlock(newBlock);
+    return newBlock;
   }
 
   /**
